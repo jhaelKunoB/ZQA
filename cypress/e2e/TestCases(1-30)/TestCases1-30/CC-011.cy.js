@@ -1,37 +1,49 @@
-describe('CC-011', () => {
-    it('Verificar que cada estado de factura tiene una descripción correcta en la tabla de "Corte de moneda nacional"', () => {
+import { login, abrirParametros, closeModal, SingOut } from './funciones';
+
+  describe('CC-012', () => {
   
-      // 1. Visitar la página de login
-      cy.visit('http://democafeteria.frogsolutions.net/')
-  
-      // 2. Ingresar credenciales de usuario (usuario: demo, contraseña: demo)
-      cy.get('#txtUsuario').type("demo")
-      cy.get('#txtPassword').type("demo")
-  
-      // 3. Hacer clic en el botón de inicio de sesión
-      cy.get('#btnEntrar').click()
-  
-      // 4. Abrir el NavBar
-      cy.get('.justify-content-between > .bi').click()
-  
-      // 5. Ubicar la opción Configuraciones
-      cy.get(':nth-child(9) > .nav-link').click()
-  
-      //6. Seleccionar la opción Configuración
-      cy.get('#Grupo8 > :nth-child(3) > a').click()
-  
-      //7. Seleccionar la tabla Cortes de moneda Extranjera
-      cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
-      cy.get('[aria-label="Descripcion: activate to sort column ascending"]').should('contain', 'Descripcion')
-      cy.get('#tblParametroId > tbody > :nth-child(1) > :nth-child(1)').should('contain', '200 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(2) > :nth-child(1)').should('contain', '100 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(3) > :nth-child(1)').should('contain', '50 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(4) > :nth-child(1)').should('contain', '20 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(5) > :nth-child(1)').should('contain', '10 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(6) > :nth-child(1)').should('contain', '5 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(7) > :nth-child(1)').should('contain', '2 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(8) > :nth-child(1)').should('contain', '1 Bs.')
-      cy.get('#tblParametroId > tbody > :nth-child(9) > :nth-child(1)').should('contain', '0.5 Bs.')
-  
+    beforeEach('passes', () => {
+      cy.visit('http://democafeteria.frogsolutions.net/login.aspx');
     })
+  
+    it('Verificar que se muestre la habilitación y deshabilitación del switch "Defecto" en la tabla de "Corte de moneda nacional". ', () => {
+      login()//para el inicio Seccion
+      abrirParametros()
+
+      cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
+      
+      const switches = ['#chk_2_1', '#chk_2_2', '#chk_2_3', '#chk_2_4', '#chk_2_5'];
+
+      // Iterar sobre cada switch
+      switches.forEach((switchId) => {
+        // Verificar que el switch existe antes de interactuar
+        cy.get(switchId)
+          .should('exist')
+          .then(($switch) => {
+            const initialChecked = $switch.is(':checked'); // Estado inicial
+
+            // Interactuar con el switch
+            cy.wrap($switch).click();
+
+            // Verificar el nuevo estado
+            cy.get(switchId).should(initialChecked ? 'not.be.checked' : 'be.checked');
+          })
+        })
+  
+    
+      closeModal()
+    
+    })
+  
+    afterEach(() => {
+      SingOut();
+     });
   })
+  
+  
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    if (err.message.includes('bootstrap is not defined')) {
+      return false; // Prevenir que Cypress falle la prueba
+    }
+  });
+  

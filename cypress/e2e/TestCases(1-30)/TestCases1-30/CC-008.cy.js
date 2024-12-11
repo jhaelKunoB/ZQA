@@ -1,55 +1,40 @@
-describe('CC-008', () => {
-    it('Verificar la funcionalidad de los interruptores en dispositivos móviles en la tabla de "Corte de moneda nacional"', () => {
+import { login, abrirParametros, closeModal, SingOut } from './funciones';
+
+describe('CC-009', () => {
   
-      // 1. Visitar la página de login
-      cy.visit('http://democafeteria.frogsolutions.net/')
-  
-      // 2. Ingresar credenciales de usuario (usuario: demo, contraseña: demo)
-      cy.get('#txtUsuario').type("demo")
-      cy.get('#txtPassword').type("demo")
-  
-      // 3. Hacer clic en el botón de inicio de sesión
-      cy.get('#btnEntrar').click()
-  
-      // 4. Abrir el NavBar
-      cy.get('.justify-content-between > .bi').click()
-  
-      // 5. Ubicar la opción Configuraciones
-      cy.get(':nth-child(9) > .nav-link').click()
-  
-      //6. Seleccionar la opción Configuración
-      cy.get('#Grupo8 > :nth-child(3) > a').click()
-  
-      //7. Seleccionar la tabla Cortes de moneda nacional
-      cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
-  
-      cy.get('#chk_1_1').click()
-      cy.get('#chk_2_1').click()
-  
-      cy.get('#chk_1_2').click()
-      cy.get('#chk_2_2').click()
-  
-      cy.get('#chk_1_3').click()
-      cy.get('#chk_2_3').click()
-  
-      cy.get('#chk_1_4').click()
-      cy.get('#chk_2_4').click()
-  
-      cy.get('#chk_1_5').click()
-  
-      cy.get('#chk_2_5').click()
-      cy.get('#chk_1_6').click()
-  
-      cy.get('#chk_2_6').click()
-      cy.get('#chk_1_7').click()
-  
-      cy.get('#chk_2_7').click()
-      cy.get('#chk_1_8').click()
-  
-      cy.get('#chk_2_8').click()
-      cy.get('#chk_1_9').click()
-  
-      cy.get('#chk_2_9').click()
-  
-    })
+  beforeEach('passes', () => {
+    cy.visit('http://democafeteria.frogsolutions.net/login.aspx');
   })
+  
+    it('Verificar que la abreviatura se muestre correctamente en la tabla de "Corte de moneda nacional" (Ejemplo: 200 Bs. - 100 Bs. - 50 Bs. - 20 Bs. - 10 Bs. - 5 Bs. - 2 Bs.  - 1 Bs.  - 0.5 Bs.)  ', () => {
+      login()//para el inicio Seccion
+      abrirParametros()
+      
+      cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
+      cy.get('[aria-label="Abrev.: activate to sort column ascending"]').should('contain', 'Abrev.')
+      cy.get('#tblParametroId > tbody > :nth-child(1) > :nth-child(2)').should('contain', '200 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(2) > :nth-child(2)').should('contain', '100 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(3) > :nth-child(2)').should('contain', '50 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(4) > :nth-child(2)').should('contain', '20 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(5) > :nth-child(2)').should('contain', '10 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(6) > :nth-child(2)').should('contain', '5 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(7) > :nth-child(2)').should('contain', '2 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(8) > :nth-child(2)').should('contain', '1 Bs.')
+      cy.get('#tblParametroId > tbody > :nth-child(9) > :nth-child(2)').should('contain', '0.5 Bs.')
+    
+      closeModal()
+    
+    })
+  
+    afterEach(() => {
+      SingOut();
+     });
+  })
+  
+  
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    if (err.message.includes('bootstrap is not defined')) {
+      return false; // Prevenir que Cypress falle la prueba
+    }
+  });
+  

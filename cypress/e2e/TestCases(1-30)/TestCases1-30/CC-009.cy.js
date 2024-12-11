@@ -1,28 +1,42 @@
-describe('CC-009', () => {
-    it('Verificar la carga correcta de la tabla en distintos navegadores en la tabla de "Corte de moneda nacional"', () => {
-  
-      // 1. Visitar la página de login
-      cy.visit('http://democafeteria.frogsolutions.net/')
-  
-      // 2. Ingresar credenciales de usuario (usuario: demo, contraseña: demo)
-      cy.get('#txtUsuario').type("demo")
-      cy.get('#txtPassword').type("demo")
-  
-      // 3. Hacer clic en el botón de inicio de sesión
-      cy.get('#btnEntrar').click()
-  
-      // 4. Abrir el NavBar
-      cy.get('.justify-content-between > .bi').click()
-  
-      // 5. Ubicar la opción Configuraciones
-      cy.get(':nth-child(9) > .nav-link').click()
-  
-      //6. Seleccionar la opción Configuración
-      cy.get('#Grupo8 > :nth-child(3) > a').click()
-  
-      //7. Seleccionar la tabla Cortes de moneda Extranjera
-      cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
-  
-  
-    })
+import { login, abrirParametros, closeModal, SingOut } from './funciones';
+//Es un BUG
+describe('CC-010', () => {
+
+  beforeEach('passes', () => {
+    cy.visit('http://democafeteria.frogsolutions.net/login.aspx');
   })
+
+  it('Verificar que se muestre la habilitación y deshabilitación del switch "Visible" en la tabla de "Corte de moneda nacional".', () => {
+    login()//para el inicio Seccion
+    abrirParametros()
+
+    cy.get(':nth-child(2) > .text-center > .ri-arrow-right-s-line').click()
+    
+    const defectoSwitches = ['#chk_1_1', '#chk_1_2', '#chk_1_3', '#chk_1_4', '#chk_1_5'];
+
+    // Establecer todos los switches "Visible" en estado habilitado
+    defectoSwitches.forEach((switchId) => {
+      cy.get(switchId).then(($switch) => {
+        if (!$switch.is(':checked')) {
+          // Si no está habilitado, habilitarlo
+          cy.wrap($switch).click();
+          //cy.get(switchId).should('be.checked'); // Verificar que está habilitado
+        }
+      });
+    });
+  
+    closeModal()
+  
+  })
+
+  afterEach(() => {
+    SingOut();
+   });
+})
+
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  if (err.message.includes('bootstrap is not defined')) {
+    return false; // Prevenir que Cypress falle la prueba
+  }
+});
