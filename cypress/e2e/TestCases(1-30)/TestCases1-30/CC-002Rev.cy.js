@@ -1,19 +1,19 @@
 import { login, abrirParametros, closeModal, SingOut } from './funciones';
-//Es un bug
-describe('CC-005', () => {
+// Es un bug
+describe('CC-003', () => {
 
   beforeEach('passes', () => {
     cy.visit('http://democafeteria.frogsolutions.net/login.aspx');
-  })
+  });
 
-  it('Verificar que se muestre la habilitación y deshabilitación del switch "Defecto" en la tabla de "Corte de moneda extranjera". ', () => {
-    login()//para el inicio Seccion
-    abrirParametros()
-    
+  it('Verificar que se muestre la habilitación y deshabilitación del switch "Visible" en la tabla de "Corte de moneda extranjera".', () => {
+    login(); // Para el inicio de sesión
+    abrirParametros();
+
     cy.get(':nth-child(1) > .text-center > .ri-arrow-right-s-line').click();
 
     // Lista de switches
-    const switches = ['#chk_2_1', '#chk_2_2', '#chk_2_3', '#chk_2_4', '#chk_2_5'];
+    const switches = ['#chk_1_1', '#chk_1_2', '#chk_1_3', '#chk_1_4', '#chk_1_5'];
 
     // Iterar sobre cada switch
     switches.forEach((switchId) => {
@@ -30,16 +30,16 @@ describe('CC-005', () => {
           cy.get(switchId).should(initialChecked ? 'not.be.checked' : 'be.checked');
         })
       })
-  
-    closeModal()
-  
-  })
+      
+      closeModal();
+    
+  });
 
   afterEach(() => {
-    SingOut();
-   });
-})
-
+   
+    //SingOut();
+  });
+});
 
 Cypress.on('uncaught:exception', (err, runnable) => {
   if (err.message.includes('bootstrap is not defined')) {
